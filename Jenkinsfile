@@ -12,9 +12,19 @@ pipeline {
     }
 
     stages {
+        stage('Start Trigger') {
+            steps {
+                echo "Rozpoczęcie pipeline – Build #${env.BUILD_NUMBER}"
+            }
+        }
+
         stage('Clone') {
             steps {
-                git url: 'https://github.com/TWOJ_USER/statki.git', branch: 'main'
+                git(
+                    url: 'https://github.com/Stachu934/statki.git',
+                    branch: 'master',
+                    credentialsId: 'github-statki-token'  
+                )
             }
         }
 
@@ -33,7 +43,6 @@ pipeline {
         stage('Archive Logs') {
             steps {
                 script {
-                    // Załóżmy, że testy wypisują logi do pliku
                     sh 'mkdir -p logs && echo "Przykładowy log" > logs/test.log'
                     archiveArtifacts artifacts: 'logs/*.log', fingerprint: true
                 }
