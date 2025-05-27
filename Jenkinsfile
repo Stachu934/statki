@@ -23,27 +23,31 @@ pipeline {
                 git(
                     url: 'https://github.com/Stachu934/statki.git',
                     branch: 'master',
-                    credentialsId: 'github-statki-token'  
+                    credentialsId: 'github-statki-token'
                 )
             }
         }
 
         stage('Build Docker image') {
             steps {
-                sh 'docker build -f $DOCKERFILE -t $IMAGE_NAME .'
+                script {
+                    sh 'mkdir -p logs'
+                    sh 'docker build -f $DOCKERFILE -t $IMAGE_NAME . > logs/build.log 2>&1'
+                }
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'docker run --rm $IMAGE_NAME'
+                script {
+                    sh 'docker run --rm $IMAGE_NAME > logs/test.log 2>&1'
+                }
             }
         }
 
         stage('Archive Logs') {
             steps {
                 script {
-                    sh 'mkdir -p logs && echo "Przykładowy log" > logs/test.log'
                     archiveArtifacts artifacts: 'logs/*.log', fingerprint: true
                 }
             }
