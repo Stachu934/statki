@@ -1,0 +1,13 @@
+# Dockerfile.builder
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# Skopiuj wszystko do obrazu
+COPY . .
+
+# Zainstaluj zależności – zakładamy, że Pillow i inne są w requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Domyślnie uruchamia testy (można też przez pytest)
+CMD ["python", "uruchom_testy.py"]
